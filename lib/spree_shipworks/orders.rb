@@ -11,7 +11,7 @@ module SpreeShipworks
                 order('updated_at asc')
 
       if start_date && start_date.to_s != ''
-        scope = scope.where('updated_at > ?', DateTime.parse(start_date.to_s))
+        scope = scope.where('updated_at > ?', DateTime.parse(start_date.to_s).advance(seconds: 1))
       end
 
       scope
