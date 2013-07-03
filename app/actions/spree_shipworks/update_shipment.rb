@@ -7,7 +7,7 @@ module SpreeShipworks
 
       shipment = order.shipments.first
       if shipment.try(:update_attributes, { :tracking => params['tracking'] })
-        shipment.ship
+        shipment.ship if shipment.can_ship?
         
         response do |r|
           r.element 'UpdateSuccess'
