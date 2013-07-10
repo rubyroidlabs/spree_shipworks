@@ -43,7 +43,7 @@ module SpreeShipworks
           cc.element 'Owner',   self.name || '' rescue ''
           cc.element 'Number',  self.display_number || '' rescue ''
           cc.element 'Expires', self.expires || '' rescue ''
-          cc.element 'CCV',     self.verification_value if self.verification_value?
+          cc.element 'CCV',     self.verification_value if self.verification_value? rescue ''
         end
       end
 
