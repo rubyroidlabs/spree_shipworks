@@ -39,7 +39,7 @@ module SpreeShipworks
     module Creditcard
       def to_shipworks_xml(context)
         context.element 'CreditCard' do |cc|
-          cc.element 'Type',    self.cc_type || 'unknown' if self.respond_to?(:cc_type)
+          cc.element 'Type',    self.cc_type rescue 'unkown'
           cc.element 'Owner',   self.name || '' rescue ''
           cc.element 'Number',  self.display_number || '' rescue ''
           cc.element 'Expires', self.expires || '' rescue ''
