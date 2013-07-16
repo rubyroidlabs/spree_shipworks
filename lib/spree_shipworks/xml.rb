@@ -39,7 +39,7 @@ module SpreeShipworks
     module Creditcard
       def to_shipworks_xml(context)
         context.element 'CreditCard' do |cc|
-          cc.element 'Type',    'Visa'
+          cc.element 'Type',    self.cc_type || 'unknown' if self.respond_to?(:cc_type)
           cc.element 'Owner',   self.name || '' rescue ''
           cc.element 'Number',  self.display_number || '' rescue ''
           cc.element 'Expires', self.expires || '' rescue ''
@@ -133,7 +133,7 @@ module SpreeShipworks
       def to_shipworks_xml(context)
         context.element 'Payment' do |payment_context|
           payment_context.element 'Method', self.payment_source.class.name.split("::").last
-          if self.source.present?
+          if self.source.present? && self.source.is_a? Spree::CreditCard
             self.source.extend(Creditcard)
             self.source.to_shipworks_xml(payment_context)
           end
