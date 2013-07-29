@@ -15,6 +15,14 @@ module SpreeShipworks
       end
     end # Address
 
+    module Note
+      def to_shipworks_xml(context, note)
+        context.element 'Notes' do |n|
+          n.element 'Note', note
+        end
+      end
+    end # Address
+
     module Adjustment
       def to_shipworks_xml(context)
         if self.amount.present?
@@ -97,6 +105,12 @@ module SpreeShipworks
           order_context.element 'StatusCode',     self.state
           order_context.element 'CustomerID',     self.user.try(:id)
 
+          if self.special_instructions.present?
+            self.special_instructions.extend(Note)
+            self.special_instructions.to_shipworks_xml(order_context, self.special_instructions)
+          end
+
+
           if self.ship_address
             self.ship_address.extend(Address)
             self.ship_address.to_shipworks_xml('ShippingAddress', order_context)
@@ -140,5 +154,6 @@ module SpreeShipworks
         end
       end
     end # Payment
+
   end
 end
