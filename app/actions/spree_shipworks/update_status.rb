@@ -5,7 +5,7 @@ module SpreeShipworks
     def call(params)
       if order = Spree::Order.find(params['order'])
         order.shipments.each do |shipment|
-          next if status == 'ship' and shipment.state == 'shipped'
+          next if status == 'ship'
           shipment.send("#{params['status']}!".to_sym)
         end
 
