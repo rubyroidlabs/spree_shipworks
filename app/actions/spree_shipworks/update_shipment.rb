@@ -11,6 +11,7 @@ module SpreeShipworks
           r.element 'UpdateSuccess'
         end
       else
+        Honeybadger.notify(error_response)
         error_response("UNPROCESSIBLE_ENTITY", "Could not update tracking information for Order ##{params['order']}")
       end
 
