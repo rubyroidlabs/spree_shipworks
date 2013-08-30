@@ -12,6 +12,8 @@ module SpreeShipworks
           a.element 'PostalCode', self.zipcode
           a.element 'Country',    self.country.try(:iso_name)
           a.element 'Phone',      self.phone
+          a.element 'Fax',        ''
+          a.element 'Email',      self.user.email
         end
       end
     end # Address
