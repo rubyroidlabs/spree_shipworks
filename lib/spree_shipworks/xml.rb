@@ -13,7 +13,7 @@ module SpreeShipworks
           a.element 'Country',    self.country.try(:iso_name)
           a.element 'Phone',      self.phone
           a.element 'Fax',        ''
-          a.element 'Email',      self.user.email
+          a.element 'Email',      self.user.try(:email)
         end
       end
     end # Address
