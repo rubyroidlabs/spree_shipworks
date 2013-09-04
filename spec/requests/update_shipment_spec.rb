@@ -76,6 +76,6 @@ describe 'UpdateShipment action' do
       and_return(nil)
 
     xml.xpath('/ShipWorks/Error').should be_present
-    xml.xpath('/ShipWorks/Error/Code').text.should == 'UNPROCESSIBLE_ENTITY'
+    xml.xpath('/ShipWorks/Error/Code').text.should == 'INTERNAL_SERVER_ERROR'
   end
 end
