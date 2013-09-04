@@ -24,7 +24,7 @@ module SpreeShipworks
           n.element 'Note', note
         end
       end
-    end # Address
+    end # Note
 
     module Adjustment
       def to_shipworks_xml(context)

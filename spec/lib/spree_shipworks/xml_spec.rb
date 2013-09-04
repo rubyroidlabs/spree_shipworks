@@ -190,9 +190,9 @@ module SpreeShipworks
           at_least(1).times.
           and_return(product)
 
-        variant.should_receive(:options_text).
-          at_least(1).times.
-          and_return("test, option")
+        # variant.should_receive(:options_text).
+        #   at_least(1).times.
+        #   and_return("test, option")
       end
 
       it 'should have an ItemID node' do
@@ -213,7 +213,7 @@ module SpreeShipworks
 
       it 'should have a Name node' do
         xml.xpath('/Item/Name').text.should =~ /^Test Product/
-        xml.xpath('/Item/Name').text.should =~ /\)$/
+        # xml.xpath('/Item/Name').text.should =~ /\)$/
       end
 
       it 'should have a Quantity node' do
