@@ -63,7 +63,7 @@ module SpreeShipworks
     end
 
     def api_user
-      @api_user ||= (Spree::User.find_by_email(api_username) || Spree::User.find_by_login(api_username))
+      @api_user ||= (Spree.user_class.find_by_email(api_username) || Spree.user_class.find_by_login(api_username))
     end
 
     def api_username
