@@ -4,7 +4,7 @@ module SpreeShipworks
       def to_shipworks_xml(name, context)
         context.element name do |a|
           a.element 'FullName',   self.full_name
-          a.element 'Company',    self.user.try(:company)
+          a.element 'Company',    ""#self.user.try(:company)
           a.element 'Street1',    self.address1
           a.element 'Street2',    self.address2
           a.element 'City',       self.city
@@ -13,7 +13,7 @@ module SpreeShipworks
           a.element 'Country',    self.country.try(:iso_name)
           a.element 'Phone',      self.phone
           a.element 'Fax',        ''
-          a.element 'Email',      self.user.try(:email)
+          a.element 'Email',      ""#self.user.try(:email)
         end
       end
     end # Address
