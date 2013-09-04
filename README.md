@@ -1,13 +1,20 @@
 SpreeShipworks
 ==============
 
-Introduction goes here.
+This extension implements the ShipWorks 3.0 API endpoint (/shipworks/api) on
+your Spree Store, as defined in “ShipWorks 3.0: Store Integration Guide: version
+1.0”.
 
 
-Example
-=======
+Installation
+============
 
-Example goes here.
+Add to your Gemfile:
+
+    # spree 1.3
+    gem 'spree_shipworks',
+        :github => 'fantree/spree_shipworks',
+        :branch => '1-3-stable'
 
 Testing
 -------
