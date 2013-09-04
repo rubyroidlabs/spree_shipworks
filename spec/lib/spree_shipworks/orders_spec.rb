@@ -10,7 +10,7 @@ module SpreeShipworks
 
       before(:each) do
         Spree::Order.should_receive(:where).
-          with(:state => SpreeShipworks::Orders::VALID_STATES).
+          with(:state => SpreeShipworks::Orders::VALID_STATES, :shipment_state => "ready").
           and_return(where_state_scope)
 
         where_state_scope.should_receive(:order).
@@ -33,7 +33,7 @@ module SpreeShipworks
       context 'with a date argument' do
         it 'should return the correct scope' do
           order_scope.should_receive(:where).
-            with('updated_at > ?', DateTime.parse(date.to_s)).
+            with('updated_at > ?', DateTime.parse(date.advance(seconds: 1).to_s)).
             and_return(where_date_scope)
 
           Orders.since(date).should == where_date_scope
