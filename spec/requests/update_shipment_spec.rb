@@ -13,13 +13,13 @@ describe 'UpdateShipment action' do
     { 'order' => '1', 'tracking' => '1' }
   }
   let(:find_scope) {
-    mock('find_scope')
+    double('find_scope')
   }
   let(:shipments_scope) {
-    mock('shipments_scope')
+    double('shipments_scope')
   }
   let(:shipment_scope) {
-    mock('shipment_scope')
+    double('shipment_scope')
   }
 
   include_context 'for ShipWorks actions'

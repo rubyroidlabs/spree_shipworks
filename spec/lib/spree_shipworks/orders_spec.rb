@@ -4,9 +4,9 @@ module SpreeShipworks
   describe Orders do
     context '#since' do
       let(:date)  { DateTime.now }
-      let(:order_scope)       { mock('order_scope') }
-      let(:where_date_scope)  { mock('where_date_scope') }
-      let(:where_state_scope) { mock('where_state_scope') }
+      let(:order_scope)       { double('order_scope') }
+      let(:where_date_scope)  { double('where_date_scope') }
+      let(:where_state_scope) { double('where_state_scope') }
 
       before(:each) do
         Spree::Order.should_receive(:where).
@@ -60,16 +60,16 @@ module SpreeShipworks
       context 'with valid arguments' do
         def order(date_time)
           parsed_date_time = DateTime.parse(date_time)
-          result = mock("order created at #{DateTime.now} updated at #{parsed_date_time}")
+          result = double("order created at #{DateTime.now} updated at #{parsed_date_time}")
           result.stub(:updated_at).and_return(parsed_date_time)
           result
         end
 
         let(:date)              { DateTime.parse(date_string) }
         let(:maxcount)          { maxcount_string.to_i }
-        let(:relation_scope)    { mock('relation_scope') }
-        let(:limit_scope)       { mock('limit_scope') }
-        let(:offset_scope)      { mock('offset_scope') }
+        let(:relation_scope)    { double('relation_scope') }
+        let(:limit_scope)       { double('limit_scope') }
+        let(:offset_scope)      { double('offset_scope') }
         let(:orders) {[
           order(date.to_s),
           order(date.to_s),

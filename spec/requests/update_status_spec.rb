@@ -13,10 +13,10 @@ describe 'UpdateStatus action' do
     { 'order' => '1', 'status' => 'next' }
   }
   let(:order_scope) {
-    mock('order_scope')
+    double('order_scope')
   }
   let(:shipment_scope) {
-    mock('shipment_scope')
+    double('shipment_scope')
   }
   let(:shipments_scope) {
     [shipment_scope]

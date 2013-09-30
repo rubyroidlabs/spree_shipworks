@@ -12,7 +12,7 @@ describe 'GetCount action' do
   let(:action_params) { { 'start' => '2012-01-01T11:59:00' } }
   let(:date_string)   { action_params['start'] }
   let(:date)          { DateTime.parse(date_string) }
-  let(:order_scope)   { mock('order_scope') }
+  let(:order_scope)   { double('order_scope') }
 
   include_context 'for ShipWorks actions'
   it_should_behave_like "a ShipWorks API action"
