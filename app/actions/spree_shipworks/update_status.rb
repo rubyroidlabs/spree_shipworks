@@ -3,14 +3,24 @@ module SpreeShipworks
     include Dsl
 
     def call(params)
-      if order = Spree::Order.find(params['order'])
-        order.shipments.each do |shipment|
-          next if params['status'] == 'ship'
-          shipment.send("#{params['status']}!".to_sym)
-        end
+      if Spree::Shipworks::Config.use_split_shipments
+        if shipment = Spree::Shipment.find(params['order'])
+          shipment.send("#{params['status']}!".to_sym) unless params['status'] == 'ship'
 
-        response do |r|
-          r.element 'UpdateSuccess'
+          response do |r|
+            r.element 'UpdateSuccess'
+          end
+        end
+      else
+        if order = Spree::Order.find(params['order'])
+          order.shipments.each do |shipment|
+            next if params['status'] == 'ship'
+            shipment.send("#{params['status']}!".to_sym)
+          end
+
+          response do |r|
+            r.element 'UpdateSuccess'
+          end
         end
       end
 
