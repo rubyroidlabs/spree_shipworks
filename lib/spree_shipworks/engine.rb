@@ -19,5 +19,9 @@ module SpreeShipworks
     end
 
     config.to_prepare &method(:activate).to_proc
+
+    initializer "spree.shipworks.environment", :before => :load_config_initializers do |app|
+      Spree::Shipworks::Config = Spree::ShipworksConfiguration.new
+    end
   end
 end
