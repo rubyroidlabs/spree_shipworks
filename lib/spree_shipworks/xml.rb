@@ -147,6 +147,56 @@ module SpreeShipworks
       end
     end # Order
 
+    module Shipment
+      def to_shipworks_xml(context)
+        order = self.order
+        context.element 'Order' do |order_context|
+          order_context.element 'OrderNumber',    self.id
+          order_context.element 'OrderDate',      order.created_at.to_s(:db).gsub(" ", "T")
+          order_context.element 'LastModified',   order.updated_at.to_s(:db).gsub(" ", "T")
+          order_context.element 'ShippingMethod', order.shipping_method.try(:name)
+          order_context.element 'StatusCode',     order.state
+          order_context.element 'CustomerID',     order.user.try(:id)
+
+          if order.special_instructions.present?
+            order.special_instructions.extend(Note)
+            order.special_instructions.to_shipworks_xml(order_context, order.special_instructions)
+          end
+
+
+          if order.ship_address
+            order.ship_address.extend(Address)
+            order.ship_address.to_shipworks_xml('ShippingAddress', order_context)
+          end
+
+          if order.bill_address
+            order.bill_address.extend(Address)
+            order.bill_address.to_shipworks_xml('BillingAddress', order_context)
+          end
+
+          if order.payments.first.present?
+            payment = order.payments.first.extend(::SpreeShipworks::Xml::Payment)
+            payment.to_shipworks_xml(order_context)
+          end
+
+          order_context.element 'Items' do |items_context|
+            self.line_items.each do |item|
+              next if item.quantity == 0
+              item.extend(LineItem)
+              item.to_shipworks_xml(items_context) if item.variant.present?
+            end
+          end if self.line_items.present?
+
+          order_context.element 'Totals' do |totals_context|
+            order.adjustments.each do |adjustment|
+              adjustment.extend(Adjustment)
+              adjustment.to_shipworks_xml(totals_context)
+            end
+          end
+        end
+      end
+    end # Shipment
+
     module Payment
       def to_shipworks_xml(context)
         context.element 'Payment' do |payment_context|
