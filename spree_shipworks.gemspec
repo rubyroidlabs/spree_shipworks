@@ -2,10 +2,10 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_shipworks'
-  s.version     = '1.3.2'
+  s.version     = '2.0.0'
   s.summary     = 'Spree ShipWorks'
   s.description = "This project implements the ShipWorks 3.0 API endpoint as defined in 'ShipWorks 3.0: Store Integration Guide: version 1.0'."
-  s.required_ruby_version = '>= 1.8.7'
+  s.required_ruby_version = '>= 1.9.3'
 
   s.author    = 'M. Scott Ford'
   s.authors    = ['M. Scott Ford']
