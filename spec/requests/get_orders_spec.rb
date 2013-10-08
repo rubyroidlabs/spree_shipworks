@@ -179,7 +179,7 @@ describe 'GetOrders action' do
     }
 
     it 'should return valid xml' do
-      order.should_receive(:created_at).
+      order.should_receive(:completed_at).
         and_return(DateTime.now)
       order.should_receive(:updated_at).
         and_return(DateTime.now)
@@ -203,6 +203,7 @@ describe 'GetOrders action' do
       create_admin_user
 
       order = Spree::Order.create!
+      order.update_attribute(:completed_at, Time.now)
       order.payments.create!
 
       SpreeShipworks.order_class.should_receive(:since_in_batches).

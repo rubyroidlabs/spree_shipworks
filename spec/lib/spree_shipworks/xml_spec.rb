@@ -257,7 +257,7 @@ module SpreeShipworks
       let(:xml) { order.to_shipworks_xml(context) }
 
       before(:each) do
-        order.should_receive(:created_at).
+        order.should_receive(:completed_at).
           and_return(DateTime.now)
 
         order.should_receive(:updated_at).
@@ -338,7 +338,7 @@ module SpreeShipworks
       let(:xml) { order.to_shipworks_xml(context) }
 
       before(:each) do
-        order.should_receive(:created_at).
+        order.should_receive(:completed_at).
           and_return(DateTime.now)
 
         order.should_receive(:updated_at).
