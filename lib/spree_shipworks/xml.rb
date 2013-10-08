@@ -104,7 +104,7 @@ module SpreeShipworks
           order_context.element 'OrderNumber',    self.id
           order_context.element 'OrderDate',      self.completed_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   self.updated_at.to_s(:db).gsub(" ", "T")
-          order_context.element 'ShippingMethod', self.shipping_method.try(:name)
+          order_context.element 'ShippingMethod', self.shipments.first.try(:shipping_method).try(:name)
           order_context.element 'StatusCode',     self.state
           order_context.element 'CustomerID',     self.user.try(:id)
 
@@ -154,7 +154,7 @@ module SpreeShipworks
           order_context.element 'OrderNumber',    self.id
           order_context.element 'OrderDate',      order.completed_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   order.updated_at.to_s(:db).gsub(" ", "T")
-          order_context.element 'ShippingMethod', order.shipping_method.try(:name)
+          order_context.element 'ShippingMethod', order.shipments.first.try(:shipping_method).try(:name)
           order_context.element 'StatusCode',     order.state
           order_context.element 'CustomerID',     order.user.try(:id)
 
