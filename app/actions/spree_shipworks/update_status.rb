@@ -3,7 +3,7 @@ module SpreeShipworks
     include Dsl
 
     def call(params)
-      if Spree::Shipworks::Config.use_split_shipments
+      if SpreeShipworks::Config.use_split_shipments
         if shipment = Spree::Shipment.find(params['order'])
           shipment.send("#{params['status']}!".to_sym) unless params['status'] == 'ship'
 
