@@ -153,9 +153,9 @@ module SpreeShipworks
         context.element 'Order' do |order_context|
           order_context.element 'OrderNumber',    self.id
           order_context.element 'OrderDate',      order.completed_at.to_s(:db).gsub(" ", "T")
-          order_context.element 'LastModified',   order.updated_at.to_s(:db).gsub(" ", "T")
+          order_context.element 'LastModified',   updated_at.to_s(:db).gsub(" ", "T")
           order_context.element 'ShippingMethod', order.shipments.first.try(:shipping_method).try(:name)
-          order_context.element 'StatusCode',     order.state
+          order_context.element 'StatusCode',     state
           order_context.element 'CustomerID',     order.user.try(:id)
 
           if order.special_instructions.present?

@@ -28,5 +28,12 @@ module SpreeShipworks
     initializer "spree.shipworks.environment", :before => :load_config_initializers do |app|
       SpreeShipworks::Config = Spree::ShipworksConfiguration.new
     end
+
+    config.to_prepare do
+      Dir.glob(Rails.root + "app/decorators/**/*_decorator*.rb").each do |c|
+        require_dependency(c)
+      end
+    end
+
   end
 end

@@ -53,7 +53,7 @@ module SpreeShipworks
               break
             end
             shipment.extend(Xml::Shipment)
-            last_updated_at = shipment.order.updated_at
+            last_updated_at = shipment.updated_at
             yield shipment
           end
           break if shipments.size < batch_size || broken
