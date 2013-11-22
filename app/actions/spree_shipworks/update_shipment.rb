@@ -10,7 +10,7 @@ module SpreeShipworks
         shipment = order.shipments.first
       end
 
-      if shipment.try(:update_attributes, { :tracking => params['tracking'] })
+      if shipment.try(:update_attributes, update_params(params))
         response do |r|
           r.element 'UpdateSuccess'
         end
@@ -24,5 +24,10 @@ module SpreeShipworks
     rescue => error
       error_response("INTERNAL_SERVER_ERROR", error.to_s)
     end
+  end
+
+  private
+  def update_params(params)
+    { :tracking => params['tracking'] }
   end
 end
