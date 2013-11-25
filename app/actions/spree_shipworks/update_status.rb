@@ -5,7 +5,7 @@ module SpreeShipworks
     def call(params)
       if SpreeShipworks::Config.use_split_shipments
         if shipment = Spree::Shipment.find(params['order'])
-          shipment.send("#{params['status']}!".to_sym) unless params['status'] == 'ship'
+          shipment.send("#{params['status']}!".to_sym)
 
           response do |r|
             r.element 'UpdateSuccess'
@@ -14,7 +14,6 @@ module SpreeShipworks
       else
         if order = Spree::Order.find(params['order'])
           order.shipments.each do |shipment|
-            next if params['status'] == 'ship'
             shipment.send("#{params['status']}!".to_sym)
           end
 
