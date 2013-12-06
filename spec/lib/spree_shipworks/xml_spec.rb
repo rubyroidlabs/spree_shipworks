@@ -4,7 +4,7 @@ module SpreeShipworks
   describe Xml do
     let(:context)   { SpreeShipworks::Dsl::Context.new(document, document) }
     let(:document)  { Nokogiri::XML::Document.parse("<?xml version='1.0' standalone='yes'>") }
-    let(:order)     { Spree::Order.new.extend(SpreeShipworks::Xml::Order) }
+    let(:order)     { Spree::Order.new(number: 'R123456789').extend(SpreeShipworks::Xml::Order) }
 
     context 'Address' do
       let(:address) {

@@ -26,8 +26,8 @@ describe 'UpdateStatus action' do
   it_should_behave_like 'a ShipWorks API action'
 
   it 'should respond with success' do
-    Spree::Order.should_receive(:find).
-      with(action_params['order']).
+    Spree::Order.should_receive(:find_by_number).
+      with("R#{action_params['order']}").
       and_return(order_scope)
 
     order_scope.should_receive(:shipments).
@@ -52,8 +52,8 @@ describe 'UpdateStatus action' do
   # </ShipWorks>
 
   it 'should return an error if the order can not be found' do
-    Spree::Order.should_receive(:find).
-      with(action_params['order']).
+    Spree::Order.should_receive(:find_by_number).
+      with("R#{action_params['order']}").
       and_raise(ActiveRecord::RecordNotFound)
 
     xml.xpath('/ShipWorks/Error').should be_present
@@ -61,8 +61,8 @@ describe 'UpdateStatus action' do
   end
 
   it 'should return an error if the state is invalid' do
-    Spree::Order.should_receive(:find).
-      with(action_params['order']).
+    Spree::Order.should_receive(:find_by_number).
+      with("R#{action_params['order']}").
       and_return(order_scope)
 
     klass = Class.new
@@ -89,8 +89,8 @@ describe 'UpdateStatus action' do
   end
 
   it 'should return an error if the state can not be used' do
-    Spree::Order.should_receive(:find).
-      with(action_params['order']).
+    Spree::Order.should_receive(:find_by_number).
+      with("R#{action_params['order']}").
       and_return(order_scope)
 
     order_scope.should_receive(:shipments).
@@ -107,8 +107,8 @@ describe 'UpdateStatus action' do
   end
 
   it 'should return an error if any other exceptions are caused' do
-    Spree::Order.should_receive(:find).
-      with(action_params['order']).
+    Spree::Order.should_receive(:find_by_number).
+      with("R#{action_params['order']}").
       and_return(order_scope)
 
     order_scope.should_receive(:shipments).
