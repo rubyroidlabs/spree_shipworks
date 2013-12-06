@@ -4,7 +4,8 @@ module SpreeShipworks
 
     def call(params)
       if SpreeShipworks::Config.use_split_shipments
-        if shipment = Spree::Shipment.find(params['order'])
+        number = "H#{params['order']}"
+        if shipment = Spree::Shipment.find_by_number(number) || raise(ActiveRecord::RecordNotFound)
           shipment.send("#{params['status']}!".to_sym)
 
           response do |r|
@@ -12,7 +13,8 @@ module SpreeShipworks
           end
         end
       else
-        if order = Spree::Order.find(params['order'])
+        number = "R#{params['order']}"
+        if order = Spree::Order.find_by_number(number) || raise(ActiveRecord::RecordNotFound)
           order.shipments.each do |shipment|
             shipment.send("#{params['status']}!".to_sym)
           end
@@ -24,7 +26,7 @@ module SpreeShipworks
       end
 
     rescue ActiveRecord::RecordNotFound
-      error_response("NOT_FOUND", "Unable to find an order with ID of '#{params['order']}'.")
+      error_response("NOT_FOUND", "Unable to find a #{SpreeShipworks.order_class.name.demodulize.singularize} with number of '#{number}'.")
     rescue StateMachine::InvalidTransition, NoMethodError => error
       error_response("INVALID_STATUS", error.to_s)
     rescue => error

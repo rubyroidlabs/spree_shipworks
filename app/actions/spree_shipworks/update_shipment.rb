@@ -4,9 +4,11 @@ module SpreeShipworks
 
     def call(params)
       if SpreeShipworks::Config.use_split_shipments
-        shipment = Spree::Shipment.find(params['order'])
+        number = "H#{params['order']}"
+        shipment = Spree::Shipment.find_by_number(number) || raise(ActiveRecord::RecordNotFound)
       else
-        order = Spree::Order.find(params['order'])
+        number = "R#{params['order']}"
+        order = Spree::Order.find_by_number(number) || raise(ActiveRecord::RecordNotFound)
         shipment = order.shipments.first
       end
 
@@ -20,7 +22,7 @@ module SpreeShipworks
       end
 
     rescue ActiveRecord::RecordNotFound
-      error_response("NOT_FOUND", "Unable to find an order with ID of '#{params['order']}'.")
+      error_response("NOT_FOUND", "Unable to find a #{SpreeShipworks.order_class.name.demodulize.singularize} with number of '#{number}'.")
     rescue => error
       error_response("INTERNAL_SERVER_ERROR", error.to_s)
     end
