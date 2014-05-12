@@ -10,6 +10,10 @@ module SpreeShipworks
                 where(:'spree_orders.state' => VALID_STATES, state: 'ready').
                 order('spree_shipments.updated_at asc')
 
+      if SpreeShipworks::Config.stock_location_ids_blacklist.any?
+        scope = scope.where('spree_shipments.stock_location_id NOT IN (?)', SpreeShipworks::Config.stock_location_ids_blacklist)
+      end
+
       if start_date && start_date.to_s != ''
         scope = scope.where('spree_shipments.updated_at > ?', DateTime.parse(start_date.to_s).advance(seconds: 1))
       end
