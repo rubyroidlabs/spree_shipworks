@@ -85,15 +85,14 @@ module SpreeShipworks
     context 'Creditcard' do
       let(:creditcard) {
         c = Spree::CreditCard.new(
-          :first_name => 'Testy',
-          :last_name  => 'Tester',
-          :number     => '4111111111111111',
-          :verification_value => '111',
-          :month => '12',
-          :year => '2012'
+          name: 'Testy Tester',
+          number:     '4111111111111111',
+          verification_value: '111',
+          month: '12',
+          year: '2012',
+          cc_type: 'visa'
         ).extend(SpreeShipworks::Xml::Creditcard)
         c.set_last_digits
-        c.set_card_type
         c
       }
       let(:xml) { creditcard.to_shipworks_xml(context) }
