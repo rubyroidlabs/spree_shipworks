@@ -204,7 +204,9 @@ describe 'GetOrders action' do
 
       order = Spree::Order.create!
       order.update_attribute(:completed_at, Time.now)
-      order.payments.create!
+      payment = order.payments.new
+      payment.build_payment_method(name: 'Payment Method')
+      payment.save!
 
       SpreeShipworks.order_class.should_receive(:since_in_batches).
         with(action_params['start'], action_params['maxcount']).

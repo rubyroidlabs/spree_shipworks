@@ -255,6 +255,8 @@ module SpreeShipworks
     context 'Order' do
       let(:xml) { order.to_shipworks_xml(context) }
 
+      let(:shipment) { double('shipment') }
+
       before(:each) do
         order.should_receive(:completed_at).
           and_return(DateTime.now)
@@ -265,6 +267,13 @@ module SpreeShipworks
         order.should_receive(:ship_address).
           at_least(1).times.
           and_return(Spree::Address.new)
+
+        order.should_receive(:shipments).
+          at_least(1).times.
+          and_return([shipment])
+
+        shipment.should_receive(:shipping_method).
+          and_return(Spree::ShippingMethod.new(name: 'Ground'))
 
         order.should_receive(:bill_address).
           at_least(1).times.
