@@ -262,10 +262,6 @@ module SpreeShipworks
         order.should_receive(:updated_at).
           and_return(DateTime.now)
 
-        order.should_receive(:shipping_method).
-          at_least(1).times.
-          and_return(Spree::ShippingMethod.new(:name => 'Ground'))
-
         order.should_receive(:ship_address).
           at_least(1).times.
           and_return(Spree::Address.new)
