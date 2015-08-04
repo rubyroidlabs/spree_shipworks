@@ -4,9 +4,9 @@ module SpreeShipworks
 
     def call(params)
       if SpreeShipworks::Config.use_split_shipments
-        shipment = Spree::Shipment.find(params['order'])
+        shipment = Spree::Shipment.find_by_number(params['order'])
       else
-        order = Spree::Order.find(params['order'])
+        order = Spree::Order.find_by_number(params['order'])
         shipment = order.shipments.first
       end
 
@@ -24,10 +24,11 @@ module SpreeShipworks
     rescue => error
       error_response("INTERNAL_SERVER_ERROR", error.to_s)
     end
-  end
 
-  private
-  def update_params(params)
-    { :tracking => params['tracking'] }
+    private
+
+    def update_params(params)
+      { :tracking => params['tracking'] }
+    end
   end
 end
