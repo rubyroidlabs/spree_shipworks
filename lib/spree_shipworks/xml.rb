@@ -101,10 +101,11 @@ module SpreeShipworks
     module Order
       def to_shipworks_xml(context)
         context.element 'Order' do |order_context|
-          order_context.element 'OrderNumber',    self.id
-          order_context.element 'OrderDate',      self.created_at.to_s(:db).gsub(" ", "T")
+          order_context.element 'OrderNumber',    self.number
+          order_context.element 'OrderID',        self.id
+          order_context.element 'OrderDate',      self.completed_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   self.updated_at.to_s(:db).gsub(" ", "T")
-          order_context.element 'ShippingMethod', self.shipping_method.try(:name)
+          order_context.element 'ShippingMethod', self.shipments.first.try(:shipping_method).try(:name)
           order_context.element 'StatusCode',     self.state
           order_context.element 'CustomerID',     self.user.try(:id)
 
@@ -138,11 +139,16 @@ module SpreeShipworks
           end if self.line_items.present?
 
           order_context.element 'Totals' do |totals_context|
-            self.adjustments.each do |adjustment|
+            self.all_adjustments.each do |adjustment|
               adjustment.extend(Adjustment)
               adjustment.to_shipworks_xml(totals_context)
             end
+
+            self.shipment.extend(SmallShipment)
+            self.shipment.extend(Adjustment)
+            self.shipment.to_shipworks_xml(totals_context)
           end
+
         end
       end
     end # Order
@@ -158,6 +164,16 @@ module SpreeShipworks
         end
       end
     end # Payment
+
+    module SmallShipment
+      def amount
+        self.cost
+      end
+
+      def label
+        "shipment cost"
+      end
+    end #SmallShipment
 
   end
 end
