@@ -139,15 +139,40 @@ module SpreeShipworks
           end if self.line_items.present?
 
           order_context.element 'Totals' do |totals_context|
-            self.all_adjustments.each do |adjustment|
-              adjustment.extend(Adjustment)
-              adjustment.to_shipworks_xml(totals_context)
+
+            if self.line_item_adjustments.nonzero.exists?
+              self.line_item_adjustments.nonzero.promotion.eligible.each do |promotion|
+                promotion.extend(Adjustment)
+                promotion.to_shipworks_xml(totals_context)
+              end
             end
 
-            self.shipment.extend(SmallShipment)
-            self.shipment.extend(Adjustment)
-            self.shipment.to_shipworks_xml(totals_context)
+            self.line_item_adjustments.nonzero.tax.eligible.each do |tax|
+              tax.extend(Adjustment)
+              tax.to_shipworks_xml(totals_context)
+            end
+
+            if self.shipment_adjustments.nonzero.exists?
+              self.shipment_adjustments.nonzero.promotion.eligible.each do |tax|
+                tax.extend(Adjustment)
+                tax.to_shipworks_xml(totals_context)
+              end
+            end
+
+            self.shipments.each do |shipment|
+              shipment.extend(Shipment)
+              shipment.extend(Adjustment)
+              shipment.to_shipworks_xml(totals_context)
+            end
+
+            if self.adjustments.nonzero.eligible.exists?
+              self.adjustments.nonzero.eligible.each do |adjustment|
+                adjustment.extend(Adjustment)
+                adjustment.to_shipworks_xml(totals_context)
+              end
+            end
           end
+
 
         end
       end
@@ -215,7 +240,7 @@ module SpreeShipworks
       end
     end # Payment
 
-    module SmallShipment
+    module Shipment
       def amount
         self.cost
       end
