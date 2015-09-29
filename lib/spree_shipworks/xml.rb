@@ -101,7 +101,14 @@ module SpreeShipworks
     module Order
       def to_shipworks_xml(context)
         context.element 'Order' do |order_context|
-          order_context.element 'OrderNumber',    self.number
+          if self.editable_order_number.present?
+            order_context.element 'OrderNumber',    self.editable_order_number
+          elsif self.number =~ /[a-zA-Z]/
+            order_context.element 'OrderNumber',    number_without_letters(self.number)
+            order_context.element 'OrderNumberPrefix', number_prefix(self.number)
+          else
+            order_context.element 'OrderNumber', self.number
+          end
           order_context.element 'OrderID',        self.id
           order_context.element 'OrderDate',      self.completed_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   self.updated_at.to_s(:db).gsub(" ", "T")
@@ -175,6 +182,14 @@ module SpreeShipworks
 
 
         end
+      end
+
+      def number_without_letters(big_string)
+        big_string.gsub(/[A-Za-z]+/, '')
+      end
+
+      def number_prefix(big_string)
+        big_string.gsub(/[0-9]+/, '')
       end
     end # Order
 
