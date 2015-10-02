@@ -109,7 +109,7 @@ module SpreeShipworks
           else
             order_context.element 'OrderNumber', self.number
           end
-          order_context.element 'OrderID',        self.id
+          # order_context.element 'OrderID',        self.id
           order_context.element 'OrderDate',      self.completed_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   self.updated_at.to_s(:db).gsub(" ", "T")
           order_context.element 'ShippingMethod', self.shipments.first.try(:shipping_method).try(:name)
