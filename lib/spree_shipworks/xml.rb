@@ -101,7 +101,7 @@ module SpreeShipworks
     module Order
       def to_shipworks_xml(context)
         context.element 'Order' do |order_context|
-          if self.editable_order_number.present?
+          if self.try(:editable_order_number)
             order_context.element 'OrderNumber',    self.editable_order_number
           elsif self.number =~ /[a-zA-Z]/
             order_context.element 'OrderNumber',    number_without_letters(self.number)
