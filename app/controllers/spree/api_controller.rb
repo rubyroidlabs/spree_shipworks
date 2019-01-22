@@ -2,8 +2,9 @@ module SpreeShipworks
   class Spree::ApiController < ApplicationController
     def action
       response.content_type = 'text/xml'
-
+      logger.fatal("New #{api_action} Request with #{request.query_parameters} And #{request.request_parameters} params")
       if authorized?
+        logger.fatal('Authorized')
         dispatch_action(api_action)
       elsif valid?
         unauthorized_user
@@ -76,6 +77,10 @@ module SpreeShipworks
 
     def api_action
       request.request_parameters['action'] || request.query_parameters['action']
+    end
+
+    def logger
+      @logger = Logger.new(Rails.root.join('log', 'shipworks.log'))
     end
   end
 end
