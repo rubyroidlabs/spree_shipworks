@@ -197,7 +197,7 @@ module SpreeShipworks
       def to_shipworks_xml(context)
         order = self.order
         context.element 'Order' do |order_context|
-          order_context.element 'OrderNumber',    self.id
+          order_context.element 'OrderNumber',    order.number
           order_context.element 'OrderDate',      order.completed_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   updated_at.to_s(:db).gsub(" ", "T")
           order_context.element 'ShippingMethod', order.shipments.first.try(:shipping_method).try(:name)
