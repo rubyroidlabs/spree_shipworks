@@ -3,7 +3,7 @@ module SpreeShipworks
     include Dsl
 
     def call(params)
-      if SpreeShipworks::Config.use_split_shipments && splitted_order?(params)
+      if Setting[:use_split_shipments] && splitted_order?(params)
         shipment_number = params['order'].split('-').last
         shipment = Spree::Shipment.find_by_number(shipment_number)
       else
