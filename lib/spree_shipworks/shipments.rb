@@ -6,9 +6,12 @@ module SpreeShipworks
     VALID_SHIPMENT_STATES = ::Spree::Shipment.state_machine.events.collect(&:name)
 
     def self.since(start_date = nil)
-      scope = Spree::Shipment.joins(:order).
+      scope = Spree::Shipment.joins(:order, :inventory_units).
                 where(:'spree_orders.state' => VALID_STATES, state: 'ready').
+                group('spree_shipments.id').
+                having('COUNT(spree_inventory_units) > 1').
                 order('spree_shipments.updated_at asc')
+
 
       if SpreeShipworks::Config.stock_location_ids_blacklist.any?
         scope = scope.where('spree_shipments.stock_location_id NOT IN (?)', SpreeShipworks::Config.stock_location_ids_blacklist)

@@ -8,7 +8,7 @@ module SpreeShipworks
       response do |r|
         r.element 'Orders' do |r|
           ::SpreeShipworks.order_class.since_in_batches(params['start'], params['maxcount']) do |order|
-            order.to_shipworks_xml(r) if order.line_items.present?
+            order.to_shipworks_xml(r)
           end
         end
       end
