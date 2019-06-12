@@ -101,7 +101,15 @@ module SpreeShipworks
     module Order
       def to_shipworks_xml(context)
         context.element 'Order' do |order_context|
-          order_context.element 'OrderNumber',    self.id
+          if self.try(:editable_order_number)
+            order_context.element 'OrderNumber',    self.editable_order_number
+          elsif self.number =~ /[a-zA-Z]/
+            order_context.element 'OrderNumber',    number_without_letters(self.number)
+            order_context.element 'OrderNumberPrefix', number_prefix(self.number)
+          else
+            order_context.element 'OrderNumber', self.number
+          end
+          # order_context.element 'OrderID',        self.id
           order_context.element 'OrderDate',      self.completed_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   self.updated_at.to_s(:db).gsub(" ", "T")
           order_context.element 'ShippingMethod', self.shipments.first.try(:shipping_method).try(:name)
@@ -138,12 +146,50 @@ module SpreeShipworks
           end if self.line_items.present?
 
           order_context.element 'Totals' do |totals_context|
-            self.adjustments.each do |adjustment|
-              adjustment.extend(Adjustment)
-              adjustment.to_shipworks_xml(totals_context)
+
+            if self.line_item_adjustments.nonzero.exists?
+              self.line_item_adjustments.nonzero.promotion.eligible.each do |promotion|
+                promotion.extend(Adjustment)
+                promotion.to_shipworks_xml(totals_context)
+              end
+            end
+
+            self.line_item_adjustments.nonzero.tax.eligible.each do |tax|
+              tax.extend(Adjustment)
+              tax.to_shipworks_xml(totals_context)
+            end
+
+            if self.shipment_adjustments.nonzero.exists?
+              self.shipment_adjustments.nonzero.promotion.eligible.each do |tax|
+                tax.extend(Adjustment)
+                tax.to_shipworks_xml(totals_context)
+              end
+            end
+
+            self.shipments.each do |shipment|
+              shipment.extend(Shipment)
+              shipment.extend(Adjustment)
+              shipment.to_shipworks_xml(totals_context)
+            end
+
+            if self.adjustments.nonzero.eligible.exists?
+              self.adjustments.nonzero.eligible.each do |adjustment|
+                adjustment.extend(Adjustment)
+                adjustment.to_shipworks_xml(totals_context)
+              end
             end
           end
+
+
         end
+      end
+
+      def number_without_letters(big_string)
+        big_string.gsub(/[A-Za-z]+/, '')
+      end
+
+      def number_prefix(big_string)
+        big_string.gsub(/[0-9]+/, '')
       end
     end # Order
 
@@ -151,7 +197,7 @@ module SpreeShipworks
       def to_shipworks_xml(context)
         order = self.order
         context.element 'Order' do |order_context|
-          order_context.element 'OrderNumber',    self.id
+          order_context.element 'OrderNumber',    "#{order.number}-#{self.number}"
           order_context.element 'OrderDate',      order.completed_at.to_s(:db).gsub(" ", "T")
           order_context.element 'LastModified',   updated_at.to_s(:db).gsub(" ", "T")
           order_context.element 'ShippingMethod', order.shipments.first.try(:shipping_method).try(:name)
@@ -208,6 +254,16 @@ module SpreeShipworks
         end
       end
     end # Payment
+
+    module Shipment
+      def amount
+        self.cost
+      end
+
+      def label
+        "shipment cost"
+      end
+    end #SmallShipment
 
   end
 end

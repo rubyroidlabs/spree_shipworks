@@ -3,10 +3,12 @@ module SpreeShipworks
     include Dsl
 
     def call(params)
-      if SpreeShipworks::Config.use_split_shipments
-        shipment = Spree::Shipment.find_by_number(params['order'])
+      if Setting[:use_split_shipments] && splitted_order?(params)
+        shipment_number = params['order'].split('-').last
+        shipment = Spree::Shipment.find_by_number(shipment_number)
       else
-        order = Spree::Order.find_by_number(params['order'])
+        order_number = params['order'].split('-').first
+        order = Spree::Order.find_by_number(order_number)
         shipment = order.shipments.first
       end
 
@@ -29,6 +31,10 @@ module SpreeShipworks
 
     def update_params(params)
       { :tracking => params['tracking'] }
+    end
+
+    def splitted_order?(params)
+      params['order'].split('-').last.start_with?('H')
     end
   end
 end

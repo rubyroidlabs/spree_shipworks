@@ -4,8 +4,9 @@ module SpreeShipworks
 
     def call(params)
       # TODO process comments params
-      if SpreeShipworks::Config.use_split_shipments
-        if shipment = Spree::Shipment.find_by_number(params['order'])
+      if Setting[:use_split_shipments] && splitted_order?(params)
+        shipment_number = params['order'].split('-').last
+        if shipment = Spree::Shipment.find_by_number(shipment_number)
           shipment.send("#{params['status']}!".to_sym)
 
           response do |r|
@@ -13,7 +14,8 @@ module SpreeShipworks
           end
         end
       else
-        if order = Spree::Order.find_by_number(params['order'])
+        order_number = params['order'].split('-').first
+        if order = Spree::Order.find_by_number(order_number)
           order.shipments.each do |shipment|
             shipment.send("#{params['status']}!".to_sym)
           end
@@ -30,6 +32,12 @@ module SpreeShipworks
       error_response("INVALID_STATUS", error.to_s)
     rescue => error
       error_response("INTERNAL_SERVER_ERROR", error.to_s)
+    end
+
+    private
+
+    def splitted_order?(params)
+      params['order'].split('-').last.start_with?('H')
     end
   end
 end

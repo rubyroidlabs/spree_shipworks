@@ -16,11 +16,6 @@ module SpreeShipworks
       Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
       end
-      SpreeShipworks.order_class = if SpreeShipworks::Config.use_split_shipments
-        'SpreeShipworks::Shipments'
-      else
-        'SpreeShipworks::Orders'
-      end
     end
 
     config.to_prepare &method(:activate).to_proc
