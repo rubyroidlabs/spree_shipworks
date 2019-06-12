@@ -1,4 +1,4 @@
-Spree::NumberGenerator.class_eval do
+Spree::Core::NumberGenerator.class_eval do
   NUMBER_LENGTH  = 9
   NUMBER_LETTERS = false
   NUMBER_PREFIX  = 'N'
