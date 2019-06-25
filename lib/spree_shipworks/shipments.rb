@@ -9,7 +9,7 @@ module SpreeShipworks
       scope = Spree::Shipment.joins(:order, :inventory_units).
                 where(:'spree_orders.state' => VALID_STATES, state: 'ready').
                 group('spree_shipments.id').
-                having('COUNT(spree_inventory_units) > 1').
+                having('COUNT(spree_inventory_units) > 0').
                 order('spree_shipments.updated_at asc')
 
 
