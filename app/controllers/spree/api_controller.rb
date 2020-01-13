@@ -32,27 +32,27 @@ module SpreeShipworks
       if actions[action_name].present?
         action_result = actions[action_name].new.call(request.request_parameters)
         logger.info(action_result)
-        render(:text => action_result)
+        render(plain: action_result)
       elsif action_name == 'version_probe'
         dsl = Object.new.extend(Dsl)
-        render(:text => dsl.response {})
+        render(plain: dsl.response {})
       else
         logger.info("Unknown action `#{action_name}`.")
         dsl = Object.new.extend(Dsl)
-        render(:text => dsl.error_response("NOT_FOUND", "Unknown action `#{action_name}`."))
+        render(plain: dsl.error_response("NOT_FOUND", "Unknown action `#{action_name}`."))
       end
     end
 
     def invalid_user
       logger.info("Invalid User")
       dsl = Object.new.extend(Dsl)
-      render(:text => dsl.error_response("INVALID_USER_OR_PASSWORD", "Invalid username or password"))
+      render(plain: dsl.error_response("INVALID_USER_OR_PASSWORD", "Invalid username or password"))
     end
 
     def unauthorized_user
       logger.info("Unauthorized User")
       dsl = Object.new.extend(Dsl)
-      render(:text => dsl.error_response("UNAUTHORIZED_USER", "The specified user is not a Spree administrator."))
+      render(plain: dsl.error_response("UNAUTHORIZED_USER", "The specified user is not a Spree administrator."))
     end
 
     def authorized?
