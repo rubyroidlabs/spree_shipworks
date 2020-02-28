@@ -5,10 +5,10 @@ module SpreeShipworks
     def call(params)
       if Setting[:use_split_shipments] && splitted_order?(params)
         shipment_number = params['order'].split('-').last
-        shipment = Spree::Shipment.find_by_number(shipment_number)
+        shipment = ::Spree::Shipment.find_by_number(shipment_number)
       else
         order_number = params['order'].split('-').first
-        order = Spree::Order.find_by_number(order_number)
+        order = ::Spree::Order.find_by_number(order_number)
         shipment = order.shipments.first
       end
 

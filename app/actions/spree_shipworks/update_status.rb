@@ -6,7 +6,7 @@ module SpreeShipworks
       # TODO process comments params
       if Setting[:use_split_shipments] && splitted_order?(params)
         shipment_number = params['order'].split('-').last
-        if shipment = Spree::Shipment.find_by_number(shipment_number)
+        if shipment = ::Spree::Shipment.find_by_number(shipment_number)
           shipment.send("#{params['status']}!".to_sym)
 
           response do |r|
@@ -15,7 +15,7 @@ module SpreeShipworks
         end
       else
         order_number = params['order'].split('-').first
-        if order = Spree::Order.find_by_number(order_number)
+        if order = ::Spree::Order.find_by_number(order_number)
           order.shipments.each do |shipment|
             shipment.send("#{params['status']}!".to_sym)
           end

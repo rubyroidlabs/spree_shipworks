@@ -15,7 +15,7 @@ module SpreeShipworks
     private
 
     def default_store
-      @default_store ||= Spree::Store.where(default: true).first
+      @default_store ||= ::Spree::Store.where(default: true).first
     end
   end
 end

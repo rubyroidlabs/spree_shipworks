@@ -1,17 +1,18 @@
+# frozen_string_literal: true
+
 require 'spree_shipworks/xml'
 
 module SpreeShipworks
   class Shipments
-    VALID_STATES          = %w(complete resumed)
+    VALID_STATES          = %w[complete resumed].freeze
     VALID_SHIPMENT_STATES = ::Spree::Shipment.state_machine.events.collect(&:name)
 
     def self.since(start_date = nil)
-      scope = Spree::Shipment.joins(:order, :inventory_units).
-                where(:'spree_orders.state' => VALID_STATES, state: 'ready').
-                group('spree_shipments.id').
-                having('COUNT(spree_inventory_units) > 0').
-                order('spree_shipments.updated_at asc')
-
+      scope = ::Spree::Shipment.joins(:order, :inventory_units)
+                               .where('spree_orders.state': VALID_STATES, state: 'ready')
+                               .group('spree_shipments.id')
+                               .having('COUNT(spree_inventory_units) > 0')
+                               .order('spree_shipments.updated_at asc')
 
       if SpreeShipworks::Config.stock_location_ids_blacklist.any?
         scope = scope.where('spree_shipments.stock_location_id NOT IN (?)', SpreeShipworks::Config.stock_location_ids_blacklist)
@@ -29,28 +30,26 @@ module SpreeShipworks
     # ShipWorks API since it will break after the maxcount has been reached AND the updated_at
     # attribute has changed since the last order that was found.
     def self.since_in_batches(start_string, maxcount_string)
-      if !block_given?
-        raise ArgumentError.new("block not given")
-      end
+      raise ArgumentError, 'block not given' unless block_given?
 
       begin
         date = DateTime.parse(start_string)
-      rescue
-        raise ArgumentError.new("the start variable is invalid")
+      rescue StandardError
+        raise ArgumentError, 'the start variable is invalid'
       end
 
       batch_size = maxcount_string.to_i
       if batch_size.to_s != maxcount_string
-        raise ArgumentError.new("the maxcount variable is invalid")
+        raise ArgumentError, 'the maxcount variable is invalid'
       end
 
       batch = 0
       broken = false
       counter = 0
       last_updated_at = nil
-      relation = self.since(date).limit(batch_size)
+      relation = since(date).limit(batch_size)
 
-      Spree::Shipment.uncached do
+      ::Spree::Shipment.uncached do
         shipments = relation.offset(batch_size * batch).all
         while shipments.any?
           shipments.each do |shipment|
@@ -64,6 +63,7 @@ module SpreeShipworks
             yield shipment
           end
           break if shipments.size < batch_size || broken
+
           shipments = relation.offset(batch_size * (batch += 1)).all
         end
       end
