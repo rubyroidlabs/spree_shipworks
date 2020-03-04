@@ -1,5 +1,7 @@
-module SpreeShipworks
-  class Spree::ApiController < ApplicationController
+# frozen_string_literal: true
+
+module Spree
+  class ApiController < ApplicationController
     def action
       response.content_type = 'text/xml'
       logger.fatal("New #{api_action} Request with #{request.query_parameters} And #{request.request_parameters} params")
@@ -21,7 +23,7 @@ module SpreeShipworks
       Dir.glob(File.join(actions_dir, '*.rb')) do |action_file|
         action_file_basename = File.basename(action_file)
         action_name = action_file_basename.sub('.rb', '').gsub('_', '')
-        action_class_name = "SpreeShipworks::" + action_file_basename.sub('.rb', '').camelize
+        action_class_name = 'SpreeShipworks::' + action_file_basename.sub('.rb', '').camelize
         action_class = action_class_name.constantize
         result[action_name] = action_class
       end
@@ -34,25 +36,25 @@ module SpreeShipworks
         logger.info(action_result)
         render(plain: action_result)
       elsif action_name == 'version_probe'
-        dsl = Object.new.extend(Dsl)
+        dsl = Object.new.extend(::SpreeShipworks::Dsl)
         render(plain: dsl.response {})
       else
         logger.info("Unknown action `#{action_name}`.")
-        dsl = Object.new.extend(Dsl)
-        render(plain: dsl.error_response("NOT_FOUND", "Unknown action `#{action_name}`."))
+        dsl = Object.new.extend(::SpreeShipworks::Dsl)
+        render(plain: dsl.error_response('NOT_FOUND', "Unknown action `#{action_name}`."))
       end
     end
 
     def invalid_user
-      logger.info("Invalid User")
-      dsl = Object.new.extend(Dsl)
-      render(plain: dsl.error_response("INVALID_USER_OR_PASSWORD", "Invalid username or password"))
+      logger.info('Invalid User')
+      dsl = Object.new.extend(::SpreeShipworks::Dsl)
+      render(plain: dsl.error_response('INVALID_USER_OR_PASSWORD', 'Invalid username or password'))
     end
 
     def unauthorized_user
-      logger.info("Unauthorized User")
-      dsl = Object.new.extend(Dsl)
-      render(plain: dsl.error_response("UNAUTHORIZED_USER", "The specified user is not a Spree administrator."))
+      logger.info('Unauthorized User')
+      dsl = Object.new.extend(::SpreeShipworks::Dsl)
+      render(plain: dsl.error_response('UNAUTHORIZED_USER', 'The specified user is not a Spree administrator.'))
     end
 
     def authorized?
