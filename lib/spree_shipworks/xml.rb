@@ -166,7 +166,7 @@ module SpreeShipworks
               end
             end
 
-            self.shipments.each do |shipment|
+            self.shipments.where(state: 'ready').each do |shipment|
               shipment.extend(Shipment)
               shipment.extend(Adjustment)
               shipment.to_shipworks_xml(totals_context)

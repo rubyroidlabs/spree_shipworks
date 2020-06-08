@@ -9,14 +9,16 @@ module SpreeShipworks
 
     def self.since(start_date = nil)
       scope = ::Spree::Order
-              .where(state: VALID_STATES, shipment_state: 'ready')
-              .order('updated_at asc')
+              .where(state: VALID_STATES)
+              .joins(:shipments)
+              .where('spree_shipments.state' => 'ready')
 
       if start_date && start_date.to_s != ''
-        scope = scope.where('updated_at > ?', DateTime.parse(start_date.to_s).advance(seconds: 1))
+        date = DateTime.parse(start_date.to_s).advance(seconds: 1)
+        scope = scope.where('spree_orders.updated_at > ?', date).where('spree_shipments.updated_at > ?', date)
       end
 
-      scope
+      scope.order('updated_at asc')
     end
 
     # AR::Base#find_each and AR::Base#find_in_batches do not allow support ordering or limiting
