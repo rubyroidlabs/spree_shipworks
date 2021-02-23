@@ -22,7 +22,19 @@ module SpreeShipworks
         scope = scope.where('spree_shipments.updated_at > ?', DateTime.parse(start_date.to_s).advance(seconds: 1))
       end
 
-      scope
+      scope.preload(
+        selected_shipping_rate: :shipping_method,
+        inventory_units: [
+          :line_item,
+          variant: %i[product option_values]
+        ],
+        order: [
+          :adjustments,
+          payments: :source,
+          ship_address: %i[country state],
+          bill_address: %i[country state]
+        ]
+      )
     end
 
     # AR::Base#find_each and AR::Base#find_in_batches do not allow support ordering or limiting
