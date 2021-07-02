@@ -51,9 +51,7 @@ module SpreeShipworks
       end
 
       batch_size = maxcount_string.to_i
-      if batch_size.to_s != maxcount_string
-        raise ArgumentError, 'the maxcount variable is invalid'
-      end
+      raise ArgumentError, 'the maxcount variable is invalid' if batch_size.to_s != maxcount_string
 
       batch = 0
       broken = false
@@ -66,7 +64,7 @@ module SpreeShipworks
         while shipments.any?
           shipments.each do |shipment|
             counter += 1
-            if counter > batch_size && last_updated_at != shipment.updated_at
+            if counter > batch_size && last_updated_at.to_i != shipment.updated_at.to_i
               broken = true
               break
             end

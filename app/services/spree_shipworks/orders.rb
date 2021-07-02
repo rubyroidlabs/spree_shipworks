@@ -50,7 +50,7 @@ module SpreeShipworks
         while orders.any?
           orders.each do |order|
             counter += 1
-            if counter > batch_size && last_updated_at != order.updated_at
+            if counter > batch_size && last_updated_at.to_i != order.updated_at.to_i
               broken = true
               break
             end
